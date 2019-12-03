@@ -3,54 +3,82 @@
 #include <vector>
 using namespace std;
 
-enum Opcode { ADD = 1, MULT = 2, EXIT = 99 };
+enum Opcode
+{
+    ADD = 1,
+    MULT = 2,
+    EXIT = 99
+};
 
-vector<int> getInput(string filename) {
-  vector<int> inputs;
-  ifstream inFile;
-  string number;
-  
-  inFile.open(filename.c_str());
-  if (!inFile.is_open()) {
-    cout << "error opening file";
-    exit(1);
-  }
-  
-  while (getline(inFile, number, ',')) {
-    inputs.push_back(stoi(number));
-  }
-  
-  inFile.close();
+vector<int> getInput(string filename)
+{
+    vector<int> inputs;
+    ifstream inFile;
+    string number;
 
-  return inputs;
+    inFile.open(filename.c_str());
+    if (!inFile.is_open())
+    {
+        cout << "error opening file";
+        exit(1);
+    }
+
+    while (getline(inFile, number, ','))
+    {
+        inputs.push_back(stoi(number));
+    }
+
+    inFile.close();
+
+    return inputs;
 }
 
-int main() {
-  vector<int> inputs = getInput("../../input/day02.txt");
+int main()
+{
+    vector<int> inputs = getInput("../../input/day02.txt");
+    vector<int> temp = inputs;
+    // Set 1202 Program Alarm state
 
-  // Set 1202 Program Alarm state
-  inputs[1] = 12;
-  inputs[2] = 2;
+    for (int noun = 0; noun < 100; noun++)
+    {
+        for (int verb = 0; verb < 100; verb++)
+        {
+            inputs = temp;
+            inputs[1] = noun;
+            inputs[2] = verb;
+            for (int k = 0; k < inputs.size(); k += 4)
+            {
+                int opcode = inputs[k];
+                int pos_val1 = inputs[k + 1];
+                int pos_val2 = inputs[k + 2];
+                int pos_out = inputs[k + 3];
+                switch (opcode)
+                {
+                case ADD:
+                    inputs[pos_out] = inputs[pos_val1] + inputs[pos_val2];
+                    break;
+                case MULT:
+                    inputs[pos_out] = inputs[pos_val1] * inputs[pos_val2];
+                    break;
+                case EXIT:
+                    // End iterations
+                    k = inputs.size();
+                    break;
+                }
+            }
+            if (noun == 12 && verb == 2)
+            {
+                cout << "PART 1 FOUND:" << endl;
+                cout << inputs[0] << endl;
+            }
 
-  for (int i = 0; i < inputs.size(); i += 4) {
-    int opcode   = inputs[i];
-    int pos_val1 = inputs[i + 1];
-    int pos_val2 = inputs[i + 2];
-    int pos_out  = inputs[i + 3];
-    switch (opcode) {
-      case ADD:
-        inputs[pos_out] = inputs[pos_val1] + inputs[pos_val2];
-        break;
-      case MULT:
-        inputs[pos_out] = inputs[pos_val1] * inputs[pos_val2];
-        break;
-      case EXIT:
-        // Get solution
-        cout << inputs[0];
-        exit(0);
-        break;
+            if (inputs[0] == 19690720)
+            {
+                cout << "PART 2 FOUND:" << endl;
+                cout << 100 * noun + verb << endl;
+            }
+        }
     }
-  }
 
-  return 0;
+    return 0;
 }
